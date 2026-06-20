@@ -38,13 +38,21 @@ async function run() {
     // --- SESSION VERIFICATION (talks to Next.js Better Auth) ---
    const verifySession = async (req, res, next) => {
   try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader?.startsWith('Bearer ')) {
+      return res.status(401).send({ message: 'unauthorized access' });
+    }
+
     const response = await fetch(`${process.env.CLIENT_URL || 'http://localhost:3001'}/api/auth/get-session`, {
       headers: {
-        cookie: req.headers.cookie || '',
+        authorization: authHeader,
       },
     });
+
     const session = await response.json();
     if (!session?.user) return res.status(401).send({ message: 'unauthorized access' });
+
     req.user = session.user;
     next();
   } catch (e) {
@@ -53,6 +61,7 @@ async function run() {
 };
 
     const verifyAdmin = async (req, res, next) => {
+
       const dbUser = await usersCollection.findOne({ email: req.user.email });
       if (!dbUser || dbUser.role !== 'admin') return res.status(403).send({ message: 'forbidden access' });
       next();
