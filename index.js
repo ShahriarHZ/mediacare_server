@@ -9,7 +9,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: ['http://localhost:3001'],
+  origin: ['http://localhost:3001', 'https://mediacare-frontend.vercel.app'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
@@ -38,7 +38,7 @@ async function run() {
     // --- SESSION VERIFICATION (talks to Next.js Better Auth) ---
     const verifySession = async (req, res, next) => {
       try {
-        const response = await fetch('http://localhost:3001/api/auth/get-session', {
+        const response = await fetch(`${process.env.CLIENT_URL || 'http://localhost:3001'}/api/auth/get-session`, {
           headers: {
             cookie: req.headers.cookie || '',
           },
