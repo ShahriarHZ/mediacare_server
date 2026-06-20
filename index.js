@@ -36,21 +36,21 @@ async function run() {
     const prescriptionsCollection = db.collection('prescriptions');
 
     // --- SESSION VERIFICATION (talks to Next.js Better Auth) ---
-    const verifySession = async (req, res, next) => {
-      try {
-        const response = await fetch(`${process.env.CLIENT_URL || 'http://localhost:3001'}/api/auth/get-session`, {
-  headers: {
-    cookie: req.headers.cookie || '',
-  },
-});
-        const session = await response.json();
-        if (!session?.user) return res.status(401).send({ message: 'unauthorized access' });
-        req.user = session.user;
-        next();
-      } catch (e) {
-        res.status(401).send({ message: 'unauthorized access' });
-      }
-    };
+   const verifySession = async (req, res, next) => {
+  try {
+    const response = await fetch(`${process.env.CLIENT_URL || 'http://localhost:3001'}/api/auth/get-session`, {
+      headers: {
+        cookie: req.headers.cookie || '',
+      },
+    });
+    const session = await response.json();
+    if (!session?.user) return res.status(401).send({ message: 'unauthorized access' });
+    req.user = session.user;
+    next();
+  } catch (e) {
+    res.status(401).send({ message: 'unauthorized access' });
+  }
+};
 
     const verifyAdmin = async (req, res, next) => {
       const dbUser = await usersCollection.findOne({ email: req.user.email });
