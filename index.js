@@ -39,10 +39,10 @@ async function run() {
     const verifySession = async (req, res, next) => {
       try {
         const response = await fetch(`${process.env.CLIENT_URL || 'http://localhost:3001'}/api/auth/get-session`, {
-          headers: {
-            cookie: req.headers.cookie || '',
-          },
-        });
+  headers: {
+    cookie: req.headers.cookie || '',
+  },
+});
         const session = await response.json();
         if (!session?.user) return res.status(401).send({ message: 'unauthorized access' });
         req.user = session.user;
